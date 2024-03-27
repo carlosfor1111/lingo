@@ -37,12 +37,12 @@ const Footer = () => {
         <Button size="lg" variant="ghost" className="w-full">
           <Image
             src="/cn.svg"
-            alt="Madarin"
+            alt="Mandarin"
             height={32}
             width={40}
             className="mr-4 rounded-md"
           />
-          Madarin
+          Mandarin
         </Button>
         <Button size="lg" variant="ghost" className="w-full">
           <Image
