@@ -6,19 +6,32 @@ import { revalidatePath } from "next/cache";
 import { auth, currentUser } from "@clerk/nextjs";
 
 import { db } from "@/db/db";
-import { getCourseById } from "@/db/queries";
+import { getCourseById, getUserProgress } from "@/db/queries";
 import { POINTS_TO_REFILL } from "@/constants";
+import { userProgress } from "@/db/schema";
 
 export const upsertUserProgress = async (courseId: number) => {
   const { userId } = await auth();
 
-  const user = currentUser();
+  const user = await currentUser();
 
-  if (!userId || !user) throw new Error("Unauthorized");
+  if (!userId || !user) {
+    throw new Error("Unauthorized");
+  }
 
   const course = await getCourseById(courseId);
 
   if (!course) {
     throw new Error("Course not found");
+  }
+
+  const existingUserProgress = await getUserProgress();
+
+  if (existingUserProgress) {
+    await db.update(userProgress).set({
+      activeCourseId: courseId,
+      userName: user.firstName || "User",
+      userImageSrc: user.imageUrl || "/mascot.svg",
+    });
   }
 };
