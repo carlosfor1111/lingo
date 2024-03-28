@@ -33,5 +33,20 @@ export const upsertUserProgress = async (courseId: number) => {
       userName: user.firstName || "User",
       userImageSrc: user.imageUrl || "/mascot.svg",
     });
+
+    revalidatePath("/courses");
+    revalidatePath("/learn");
+    redirect("/learn");
   }
+
+  await db.insert(userProgress).values({
+    userId,
+    activeCourseId: courseId,
+    userName: user.firstName || "USER",
+    userImageSrc: user.imageUrl || "/mascot.svg",
+  });
+
+  revalidatePath("/courses");
+  revalidatePath("/learn");
+  redirect("learn");
 };
