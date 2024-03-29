@@ -32,6 +32,7 @@ const LearnPage = async () => {
   if (!courseProgress) {
     redirect("/courses");
   }
+
   return (
     <div className="flex flex-row-reverse gap-[48px] px-6">
       <StickyWrapper>
@@ -47,8 +48,6 @@ const LearnPage = async () => {
         {units.map((unit) => (
           <div key={unit.id} className="mb-10">
             <Unit
-              id={unit.id}
-              order={unit.order}
               description={unit.description}
               title={unit.title}
               lessons={unit.lessons}

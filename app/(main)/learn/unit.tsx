@@ -3,8 +3,6 @@ import { LessonButton } from "@/app/(main)/learn/lesson-button";
 import { UnitBanner } from "@/app/(main)/learn/unit-banner";
 
 type Props = {
-  id: number;
-  order: number;
   title: string;
   description: string;
   lessons: (typeof lessons.$inferSelect & {
@@ -20,8 +18,6 @@ type Props = {
 };
 
 export const Unit = ({
-  id,
-  order,
   title,
   description,
   lessons,
@@ -34,6 +30,7 @@ export const Unit = ({
       <div className="flex items-center flex-col relative">
         {lessons.map((lesson, index) => {
           const isCurrent = lesson.id === activeLesson?.id;
+
           const isLocked = !lesson.completed && !isCurrent;
           return (
             <LessonButton

@@ -108,7 +108,7 @@ export const getCourseProgress = cache(async () => {
     return null;
   }
 
-  const unitsIsActiveCourse = await db.query.units.findMany({
+  const unitsInActiveCourse = await db.query.units.findMany({
     orderBy: (units, { asc }) => [asc(units.order)],
     where: eq(units.courseId, userProgress.activeCourseId),
     with: {
@@ -128,7 +128,7 @@ export const getCourseProgress = cache(async () => {
     },
   });
 
-  const firstUnCompletedLesson = unitsIsActiveCourse
+  const firstUncompletedLesson = unitsInActiveCourse
     .flatMap((unit) => unit.lessons)
     .find((lesson) => {
       return lesson.challenges.some((challenge) => {
@@ -143,8 +143,8 @@ export const getCourseProgress = cache(async () => {
     });
 
   return {
-    activeLesson: firstUnCompletedLesson,
-    activeLessonId: firstUnCompletedLesson?.id,
+    activeLesson: firstUncompletedLesson,
+    activeLessonId: firstUncompletedLesson?.id,
   };
 });
 
