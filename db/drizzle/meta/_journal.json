@@ -1,0 +1,13 @@
+{
+  "version": "5",
+  "dialect": "pg",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "5",
+      "when": 1711518179699,
+      "tag": "0000_spooky_boom_boom",
+      "breakpoints": true
+    }
+  ]
+}
