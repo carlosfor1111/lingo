@@ -62,7 +62,7 @@ export const reduceHearts = async (challengeId: number) => {
   }
 
   const currentUserProgress = await getUserProgress();
-  // const userSubscription = await getUserSubscription();
+  const userSubscription = await getUserSubscription();
 
   const challenge = await db.query.challenges.findFirst({
     where: eq(challenges.id, challengeId),
@@ -91,9 +91,9 @@ export const reduceHearts = async (challengeId: number) => {
     throw new Error("User progress not found");
   }
 
-  // if (userSubscription?.isActive) {
-  //   return { error: "subscription" };
-  // }
+  if (userSubscription?.isActive) {
+    return { error: "subscription" };
+  }
 
   if (currentUserProgress.hearts === 0) {
     return { error: "hearts" };
