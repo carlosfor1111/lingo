@@ -136,8 +136,8 @@ export const coursesRelations = relations(courses, ({ many }) => ({
 export const userSubscription = pgTable("user_subscription", {
   id: serial("id").primaryKey(),
   userId: text("user_id").notNull().unique(),
-  payCustomerId: text("stripe_customer_id").notNull().unique(),
-  paySubscriptionId: text("stripe_subscription_id").notNull().unique(),
-  payPriceId: text("stripe_price_id").notNull(),
-  payCurrentPeriodEnd: timestamp("stripe_current_period_end").notNull(),
+  stripeCustomerId: text("stripe_customer_id").notNull().unique(),
+  stripeSubscriptionId: text("stripe_subscription_id").notNull().unique(),
+  stripePriceId: text("stripe_price_id").notNull(),
+  stripeCurrentPeriodEnd: timestamp("stripe_current_period_end").notNull(),
 });
