@@ -14,7 +14,7 @@
     "push": "drizzle-kit push:pg"
   },
   "dependencies": {
-    "@clerk/nextjs": "^4.29.9",
+    "@clerk/nextjs": "^4.29.10",
     "@radix-ui/react-dialog": "^1.0.5",
     "@radix-ui/react-progress": "^1.0.3",
     "@radix-ui/react-slot": "^1.0.2",

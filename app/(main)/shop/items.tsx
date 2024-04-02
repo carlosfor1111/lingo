@@ -29,14 +29,11 @@ export const Items = ({ hearts, points, hasActiveSubscription }: Props) => {
   };
 
   const onUpgrade = () => {
-    startTransition(() => {
-      createLinePayUrl()
-        .then((response) => {
-          if (response.data) {
-            window.location.href = response.data;
-          }
-        })
-        .catch(() => toast.error("Something went wrong"));
+    startTransition(async () => {
+      const { data } = await createLinePayUrl();
+      if (data) {
+        window.location.href = data;
+      }
     });
   };
 
@@ -70,7 +67,7 @@ export const Items = ({ hearts, points, hasActiveSubscription }: Props) => {
             Unlimited hearts
           </p>
         </div>
-        <Button onClick={() => {}} disabled={pending}>
+        <Button onClick={onUpgrade} disabled={pending}>
           {hasActiveSubscription ? "settings" : "upgrade"}
         </Button>
       </div>

@@ -1,3 +1,5 @@
+import { absoluteUrl, returnUrl } from "./lib/utils";
+
 export const POINTS_TO_REFILL = 10;
 
 export const quests = [
@@ -22,3 +24,26 @@ export const quests = [
     value: 1000,
   },
 ];
+
+export const orders = {
+  amount: 299,
+  currency: "TWD",
+  orderId: "es-20240101",
+  packages: [
+    {
+      id: "Lingo Pro",
+      amount: 299,
+      products: [
+        {
+          name: "es",
+          quantity: 1,
+          price: 299,
+        },
+      ],
+    },
+  ],
+  redirectUrls: {
+    confirmUrl: absoluteUrl("/api/pay/"),
+    cancelUrl: returnUrl,
+  },
+};

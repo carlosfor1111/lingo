@@ -25,7 +25,8 @@ export default function RootLayout({
       <html lang="en">
         <body className={font.className}>
           <Toaster />
-          <ExitModal /> <HeartsModal />
+          <ExitModal />
+          <HeartsModal />
           <PracticeModal />
           {children}
         </body>
