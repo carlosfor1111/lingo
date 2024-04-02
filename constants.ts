@@ -28,7 +28,7 @@ export const quests = [
 export const orders = {
   amount: 299,
   currency: "TWD",
-  orderId: "es-20240101",
+  orderId: Date.now().toString(),
   packages: [
     {
       id: "Lingo Pro",

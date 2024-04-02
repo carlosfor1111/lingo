@@ -2,7 +2,6 @@ import { type ClassValue, clsx } from "clsx";
 import hmacSHA256 from "crypto-js/hmac-sha256";
 import Base64 from "crypto-js/enc-base64";
 import { twMerge } from "tailwind-merge";
-import { orders } from "@/constants";
 
 export function absoluteUrl(path: string) {
   return `${process.env.NEXT_PUBLIC_APP_URL}${path}`;
@@ -14,7 +13,22 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export const createSignature = (uri: string, linePayBody: typeof orders) => {
+type Order = {
+  amount: number;
+  currency: string;
+  orderId?: string;
+  packages?: {
+    id: string;
+    amount: number;
+    products: {
+      name: string;
+      quantity: number;
+      price: number;
+    }[];
+  }[];
+};
+
+export const createSignature = (uri: string, linePayBody: Order) => {
   const nonce = Date.now();
   const encrypt = `${process.env.LINE_PAY_SECRET}/${
     process.env.LINE_PAY_VERSION

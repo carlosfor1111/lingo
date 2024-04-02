@@ -25,14 +25,23 @@ export const createLinePayUrl = async () => {
   const url = `${process.env.LINE_PAY_SITE}/${process.env.LINE_PAY_VERSION}${uri}`;
 
   const headers = createSignature(uri, orders);
+
   const response = await fetch(url, {
     method: "POST",
     headers: headers,
     body: JSON.stringify(orders),
   });
 
-  const data = await response.json();
+  sessionStorage.setItem(
+    "checkout",
+    JSON.stringify({
+      userId,
+      email: user.emailAddresses[0].emailAddress,
+      orders,
+    })
+  );
 
+  const data = await response.json();
   if (data.returnCode === "0000") {
     return { data: data.info.paymentUrl.web };
   }
