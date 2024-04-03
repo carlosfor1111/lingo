@@ -2,12 +2,13 @@
 
 import Image from "next/image";
 import { toast } from "sonner";
-import { useTransition } from "react";
+import { useTransition, useEffect } from "react";
 
 import { Button } from "@/components/ui/button";
 import { POINTS_TO_REFILL } from "@/constants";
 import { refillHearts } from "@/actions/user-progress";
 import { createLinePayUrl } from "@/actions/user-subscription";
+import { useSearchParams } from "next/navigation";
 
 type Props = {
   hearts: number;
@@ -16,6 +17,21 @@ type Props = {
 };
 
 export const Items = ({ hearts, points, hasActiveSubscription }: Props) => {
+  const transactionId = useSearchParams().get("transactionId");
+  const orderId = useSearchParams().get("orderId");
+
+  const confirmSubscription = async () => {
+    await fetch(`/api/pay/?transactionId=${transactionId}&orderId=${orderId}`, {
+      method: "GET",
+    });
+  };
+
+  useEffect(() => {
+    if (transactionId && orderId) {
+      confirmSubscription();
+    }
+  }, [transactionId && orderId]);
+
   const [pending, startTransition] = useTransition();
 
   const onRefillHearts = () => {
@@ -32,7 +48,7 @@ export const Items = ({ hearts, points, hasActiveSubscription }: Props) => {
     startTransition(async () => {
       const { data } = await createLinePayUrl();
       if (data) {
-        window.location.href = data;
+        window.location.href = data.info.paymentUrl.web;
       }
     });
   };

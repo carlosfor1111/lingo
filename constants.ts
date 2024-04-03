@@ -43,7 +43,7 @@ export const orders = {
     },
   ],
   redirectUrls: {
-    confirmUrl: absoluteUrl("/api/pay/"),
+    confirmUrl: returnUrl,
     cancelUrl: returnUrl,
   },
 };

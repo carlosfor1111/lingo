@@ -1,10 +1,13 @@
 "use server";
 
 import { auth, currentUser } from "@clerk/nextjs";
+import { cookies } from "next/headers";
+
 import { absoluteUrl, createSignature } from "@/lib/utils";
 import { getUserSubscription } from "@/db/queries";
 import { userSubscription } from "@/db/schema";
 import { orders } from "@/constants";
+import { getCheckCookie } from "@/lib/cookie";
 
 export const createLinePayUrl = async () => {
   const { userId } = await auth();
@@ -13,13 +16,7 @@ export const createLinePayUrl = async () => {
   if (!userId || !user) {
     throw new Error("Unauthorized");
   }
-  if (userSubscription && userSubscription.stripeCustomerId) {
-    // const stripeSession = await stripe.billingPortal.sessions.create({
-    //   customer: userSubscription.stripeCustomerId,
-    //   return_url: returnUrl,
-    // });
-    // return { data: stripeSession.url };
-  }
+
   const uri = "/payments/request";
 
   const url = `${process.env.LINE_PAY_SITE}/${process.env.LINE_PAY_VERSION}${uri}`;
@@ -32,18 +29,26 @@ export const createLinePayUrl = async () => {
     body: JSON.stringify(orders),
   });
 
-  sessionStorage.setItem(
-    "checkout",
-    JSON.stringify({
-      userId,
-      email: user.emailAddresses[0].emailAddress,
-      orders,
-    })
-  );
+  const checkoutValue = await getCheckCookie();
 
   const data = await response.json();
+
+  console.log(data, "data1");
+
   if (data.returnCode === "0000") {
-    return { data: data.info.paymentUrl.web };
+    cookies().set(
+      "checkout",
+      JSON.stringify({
+        userId,
+        orders,
+        data,
+      })
+    );
+    return { data, orderId: orders.orderId };
+  }
+
+  if (data.returnCode === "1172" && checkoutValue) {
+    return { data: checkoutValue.data, orderId: checkoutValue.orders.orderId };
   }
 
   throw new Error("Payment went wrong");

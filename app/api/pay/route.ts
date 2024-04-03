@@ -1,17 +1,14 @@
 import { eq } from "drizzle-orm";
-import { headers } from "next/headers";
 import { NextResponse } from "next/server";
-
+import { redirect } from "next/navigation";
 import { db } from "@/db/db";
 import { userSubscription } from "@/db/schema";
 import { createSignature } from "@/lib/utils";
 import { orders } from "@/constants";
-import { auth, currentUser } from "@clerk/nextjs";
+import { getCheckCookie } from "@/lib/cookie";
+import { revalidatePath } from "next/cache";
 
 export async function GET(req: Request) {
-  const { userId } = await auth();
-  const user = await currentUser();
-
   const { searchParams } = new URL(req.url);
 
   const transactionId = searchParams.get("transactionId");
@@ -29,16 +26,11 @@ export async function GET(req: Request) {
       headers: postHeaders,
       body: JSON.stringify(body),
     });
-    // await db.query.userSubscription.findFirst({
-    //   where: eq(
-    //     `sub-${userSubscription.id}`,
-    //     userSubscription.stripeSubscriptionId
-    //   ),
-    // });
+
     const data = await response.json();
 
-    const session = sessionStorage.getItem("checkout");
-    const parseSession = session && JSON.parse(session);
+    const checkoutValue = await getCheckCookie();
+
     const currentDate = new Date();
 
     // Get next month's date
@@ -50,25 +42,43 @@ export async function GET(req: Request) {
     }
 
     if (data.returnCode === "0000") {
-      if (!parseSession?.userId) {
+      if (!checkoutValue?.userId) {
         return new NextResponse("User ID is required", { status: 400 });
       }
-
+      const transactionId = checkoutValue.data.info.transactionId;
       await db.insert(userSubscription).values({
-        userId: parseSession.userId,
-        // stripeSubscriptionId: `sub${data.transactionId}`,
-        // stripeCustomerId: `customer${data.transactionId}`,
-        // stripePriceId: orders.packages[0].id,
-        // stripeCurrentPeriodEnd: nextMonthDate,
+        userId: checkoutValue.userId,
+        stripeSubscriptionId: checkoutValue.orders.orderId,
+        stripeCustomerId: checkoutValue.userId + transactionId,
+        stripePriceId: checkoutValue.orders.amount + transactionId,
+        stripeCurrentPeriodEnd: nextMonthDate,
       });
 
-      return new NextResponse("User ID is required", { status: 400 });
+      const isSubscripted = await db.query.userSubscription.findFirst({
+        where: eq(
+          checkoutValue.orders.orderId,
+          userSubscription.stripeSubscriptionId
+        ),
+      });
+
+      if (isSubscripted) {
+        await db
+          .update(userSubscription)
+          .set({
+            stripeCustomerId: checkoutValue.userId + transactionId,
+            stripePriceId: checkoutValue.orders.amount + transactionId,
+            stripeCurrentPeriodEnd: nextMonthDate,
+          })
+          .where(
+            eq(checkoutValue.orderId, userSubscription.stripeSubscriptionId)
+          );
+      }
     }
+    revalidatePath("/shop");
+    return new NextResponse("Upgrade Successfully", { status: 200 });
   } catch (error: any) {
     return new NextResponse(`Webhook error: ${error.message}`, {
       status: 400,
     });
   }
-
-  return new NextResponse(null, { status: 200 });
 }
