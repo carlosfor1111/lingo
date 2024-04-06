@@ -33,7 +33,6 @@ export const createLinePayUrl = async () => {
 
   const data = await response.json();
 
-  console.log(data, "data1");
 
   if (data.returnCode === "0000") {
     cookies().set(
