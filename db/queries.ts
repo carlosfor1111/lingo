@@ -242,7 +242,7 @@ export const getUserSubscription = cache(async () => {
   };
 });
 
-export const getTopUsers = cache(async () => {
+export const getTopTenUsers = cache(async () => {
   const { userId } = await auth();
   if (!userId) {
     return [];

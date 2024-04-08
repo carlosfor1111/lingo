@@ -3,9 +3,7 @@
 import { auth, currentUser } from "@clerk/nextjs";
 import { cookies } from "next/headers";
 
-import { absoluteUrl, createSignature } from "@/lib/utils";
-import { getUserSubscription } from "@/db/queries";
-import { userSubscription } from "@/db/schema";
+import { createSignature } from "@/lib/utils";
 import { orders } from "@/constants";
 import { getCheckCookie } from "@/lib/cookie";
 
