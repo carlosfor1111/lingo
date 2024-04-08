@@ -66,7 +66,7 @@ export async function GET(req: Request) {
           .update(userSubscription)
           .set({
             stripeCustomerId: checkoutValue.userId + transactionId,
-            stripePriceId: checkoutValue.orders.amount + transactionId,
+            stripePriceId: `${checkoutValue.orders.packages[0].id}-${checkoutValue.orders.packages[0].amount}`,
             stripeCurrentPeriodEnd: nextMonthDate,
           })
           .where(

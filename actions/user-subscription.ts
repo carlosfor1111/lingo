@@ -33,7 +33,9 @@ export const createLinePayUrl = async () => {
 
   const data = await response.json();
 
-  console.log(data, "data1");
+  if (data.returnCode === "1172" && checkoutValue) {
+    return { data: checkoutValue.data, orderId: checkoutValue.orders.orderId };
+  }
 
   if (data.returnCode === "0000") {
     cookies().set(
@@ -45,10 +47,6 @@ export const createLinePayUrl = async () => {
       })
     );
     return { data, orderId: orders.orderId };
-  }
-
-  if (data.returnCode === "1172" && checkoutValue) {
-    return { data: checkoutValue.data, orderId: checkoutValue.orders.orderId };
   }
 
   throw new Error("Payment went wrong");
