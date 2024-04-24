@@ -31,8 +31,8 @@ async function main() {
       },
       {
         id: 2,
-        title: "English",
-        imageSrc: "/us.svg",
+        title: "Italian",
+        imageSrc: "/it.svg",
       },
       {
         id: 3,

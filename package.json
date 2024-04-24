@@ -12,6 +12,7 @@
     "generate": "drizzle-kit generate:pg",
     "seed": "npx tsx scripts/seed.ts",
     "migrate": "npx tsx scripts/migrate.ts",
+    "prod": "npx tsx scripts/prod.ts",
     "reset": "npx tsx scripts/reset.ts"
   },
   "dependencies": {
