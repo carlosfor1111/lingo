@@ -210,7 +210,6 @@ import { dataToInsert } from "@/constants";
                       correct: true,
                       text: "男人",
                       imageSrc: "/man.svg",
-                      //!pending
                       audioSrc: "/cn_man.mp3",
                     },
                     {
