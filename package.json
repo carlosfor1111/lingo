@@ -8,10 +8,11 @@
     "start": "next start",
     "lint": "next lint",
     "studio": "npx drizzle-kit studio",
+    "push": "drizzle-kit push:pg",
     "generate": "drizzle-kit generate:pg",
-    "migrate": "npx tsx scripts/migrate.ts",
     "seed": "npx tsx scripts/seed.ts",
-    "push": "drizzle-kit push:pg"
+    "migrate": "npx tsx scripts/migrate.ts",
+    "reset": "npx tsx scripts/reset.ts"
   },
   "dependencies": {
     "@clerk/nextjs": "^4.29.12",

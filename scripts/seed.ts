@@ -9,6 +9,7 @@ import {
   userProgress,
   userSubscription,
 } from "../db/schema";
+
 async function main() {
   try {
     console.log("Seeding database");
