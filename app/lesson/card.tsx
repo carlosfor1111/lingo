@@ -39,8 +39,6 @@ export const Card = ({
     onClick();
   }, [disabled, onClick, controls]);
 
-  console.log(shortcut, "shortcut");
-
   useKey(shortcut, handleClick, {}, [handleClick]);
 
   return (

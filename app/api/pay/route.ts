@@ -14,6 +14,7 @@ export async function GET(req: Request) {
   const transactionId = searchParams.get("transactionId");
 
   const uri = `/payments/${transactionId}/confirm`;
+
   const url = `${process.env.LINE_PAY_SITE}/${process.env.LINE_PAY_VERSION}${uri}`;
 
   let body = { amount: orders.amount, currency: orders.currency };
@@ -49,8 +50,8 @@ export async function GET(req: Request) {
       await db.insert(userSubscription).values({
         userId: checkoutValue.userId,
         stripeSubscriptionId: checkoutValue.orders.orderId,
-        stripeCustomerId: checkoutValue.userId + transactionId,
-        stripePriceId: checkoutValue.orders.amount + transactionId,
+        stripeCustomerId: `${checkoutValue.userId}-${transactionId}`,
+        stripePriceId: `${checkoutValue.orders.amount}-${checkoutValue.id}-${transactionId}`,
         stripeCurrentPeriodEnd: nextMonthDate,
       });
 
@@ -73,8 +74,8 @@ export async function GET(req: Request) {
             eq(checkoutValue.orderId, userSubscription.stripeSubscriptionId)
           );
       }
+      revalidatePath("/shop");
     }
-    revalidatePath("/shop");
     return new NextResponse("Upgrade Successfully", { status: 200 });
   } catch (error: any) {
     return new NextResponse(`Webhook error: ${error.message}`, {

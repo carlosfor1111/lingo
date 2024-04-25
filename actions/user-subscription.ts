@@ -1,11 +1,17 @@
 "use server";
 
+import { redirect } from "next/navigation";
 import { auth, currentUser } from "@clerk/nextjs";
+import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
 
 import { createSignature } from "@/lib/utils";
 import { orders } from "@/constants";
 import { getCheckCookie } from "@/lib/cookie";
+import { getUserSubscription } from "@/db/queries";
+import { userSubscription } from "@/db/schema";
+import { db } from "@/db/db";
+import { eq } from "drizzle-orm";
 
 export const createLinePayUrl = async () => {
   const { userId } = await auth();
@@ -48,4 +54,25 @@ export const createLinePayUrl = async () => {
   }
 
   throw new Error("Payment went wrong");
+};
+
+export const upgradeConfirm = async () => {
+  const userSubscriptionData = await getUserSubscription();
+
+  if (!userSubscriptionData) {
+    throw new Error("Upgrade fail");
+  }
+
+  revalidatePath("/shop");
+};
+
+export const cancelSubscription = async (
+  id: typeof userSubscription.$inferSelect.id
+) => {
+  if (!userSubscription.id) return;
+
+  await db.delete(userSubscription).where(eq(userSubscription.id, id));
+
+  revalidatePath("/shop");
+  redirect("/shop");
 };

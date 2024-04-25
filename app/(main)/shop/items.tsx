@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { toast } from "sonner";
 import { useTransition, useEffect } from "react";
@@ -7,7 +8,7 @@ import { useTransition, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { POINTS_TO_REFILL } from "@/constants";
 import { refillHearts } from "@/actions/user-progress";
-import { createLinePayUrl } from "@/actions/user-subscription";
+import { createLinePayUrl, upgradeConfirm } from "@/actions/user-subscription";
 import { useSearchParams } from "next/navigation";
 
 type Props = {
@@ -17,12 +18,16 @@ type Props = {
 };
 
 export const Items = ({ hearts, points, hasActiveSubscription }: Props) => {
+  const router = useRouter();
   const transactionId = useSearchParams().get("transactionId");
   const orderId = useSearchParams().get("orderId");
 
   const confirmSubscription = async () => {
     await fetch(`/api/pay/?transactionId=${transactionId}&orderId=${orderId}`, {
       method: "GET",
+    });
+    startTransition(() => {
+      upgradeConfirm().catch(() => toast.error("Something went wrong"));
     });
   };
 
@@ -83,9 +88,18 @@ export const Items = ({ hearts, points, hasActiveSubscription }: Props) => {
             Unlimited hearts
           </p>
         </div>
-        <Button onClick={onUpgrade} disabled={pending}>
-          {hasActiveSubscription ? "settings" : "upgrade"}
-        </Button>
+        {hasActiveSubscription ? (
+          <Button
+            disabled={pending}
+            onClick={() => router.push(`/shop/${orderId}`)}
+          >
+            settings
+          </Button>
+        ) : (
+          <Button onClick={onUpgrade} disabled={pending}>
+            upgrade
+          </Button>
+        )}
       </div>
     </ul>
   );
