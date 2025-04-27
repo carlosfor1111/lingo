@@ -22,6 +22,8 @@ const QuestsPage = async () => {
     redirect("/courses");
   }
 
+  //update page
+
   const isPro = !!userSubscription?.isActive;
 
   return (
